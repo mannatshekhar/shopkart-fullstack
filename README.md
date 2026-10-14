@@ -1,147 +1,129 @@
-# ShopKart — Full Stack Project
+# ShopKart
 
-Customer authentication (Lab 01), the login/home frontend flow (Lab 02),
-and the product catalog + discovery experience (Lab 03) — all in one
-project.
+A full-stack e-commerce application built with React, Node.js, Express and MongoDB. Customers can register, browse products, save items to a wishlist, manage a cart, pay with Razorpay (Test Mode) and view their order history.
+
+## Features
+
+- Register and login with JWT stored in an HttpOnly cookie
+- Product catalog with debounced search, category filter and price sorting
+- Product details page
+- Wishlist
+- Shopping cart with global state (Navbar count updates instantly)
+- Checkout with shipping form validation
+- Razorpay Test Mode payment with server-side signature verification
+- Server-side stock check and total calculation
+- Order history and order details, visible only to the order's owner
+
+## Tech stack
+
+- **Frontend:** React, Vite, React Router
+- **Backend:** Node.js, Express
+- **Database:** MongoDB (Mongoose)
+- **Auth:** JWT, bcrypt
+- **Payments:** Razorpay (Test Mode)
+
+## Project structure
 
 ```
 shopkart-fullstack/
 ├── backend/
-│   ├── controllers/
-│   │   ├── customer.controller.js
-│   │   └── product.controller.js
-│   ├── models/
-│   │   ├── customer.model.js
-│   │   └── product.model.js
+│   ├── config/         razorpay.js
+│   ├── controllers/    customer, product, cart, order
+│   ├── models/         customer, product, order
 │   ├── routes/
-│   │   ├── customer.routes.js
-│   │   └── product.routes.js
-│   ├── middlewares/
-│   │   └── auth.middleware.js
-│   ├── utils/
-│   │   └── generateToken.js
-│   ├── public/              (a plain HTML/CSS/JS version of the auth UI)
+│   ├── middlewares/    auth.middleware.js
+│   ├── utils/          generateToken.js
 │   ├── index.js
-│   ├── seed.js               (populates sample products)
-│   ├── package.json
+│   ├── seed.js         populates sample products
 │   └── .env.example
 ├── frontend/
-│   ├── src/
-│   │   ├── pages/
-│   │   │   ├── Register.jsx
-│   │   │   ├── Login.jsx
-│   │   │   ├── Home.jsx
-│   │   │   ├── Products.jsx
-│   │   │   └── ProductDetails.jsx
-│   │   ├── components/
-│   │   │   ├── Navbar.jsx
-│   │   │   ├── ProductCard.jsx
-│   │   │   └── SearchBar.jsx
-│   │   ├── services/
-│   │   │   └── api.js
-│   │   ├── App.jsx
-│   │   ├── main.jsx
-│   │   └── index.css
-│   ├── index.html
-│   ├── package.json
-│   └── .env.example
-└── postman/
-    └── ShopKart-Auth.postman_collection.json
+│   └── src/
+│       ├── pages/       Register, Login, Home, Products, ProductDetails,
+│       │                Wishlist, Cart, Checkout, Orders, OrderDetails
+│       ├── components/  Navbar, ProductCard, SearchBar, CartItem
+│       ├── context/     CartContext.jsx
+│       ├── services/    api.js
+│       └── App.jsx
+└── postman/            API collection
 ```
 
-## 1. Prerequisites
+## Prerequisites
 
 - Node.js v18+
-- A MongoDB database (local `mongod`, or a free MongoDB Atlas cluster)
+- MongoDB (local, or a free MongoDB Atlas cluster)
+- A Razorpay account in Test Mode (for test API keys)
 
-## 2. Set up the backend
+## Setup
 
-```bash
+### 1. Backend
+
+```
 cd backend
 npm install
 cp .env.example .env
 ```
 
-Open `.env` and fill in:
+Fill in `.env`:
+
 ```
-MONGO_URI=mongodb://127.0.0.1:27017/shopkart      # or your Atlas URI
+MONGO_URI=mongodb://127.0.0.1:27017/shopkart
 JWT_SECRET=some_long_random_string
+COOKIE_EXPIRES_DAYS=7
+RAZORPAY_KEY_ID=rzp_test_xxxxxxxx
+RAZORPAY_KEY_SECRET=your_test_secret
 ```
 
-Start it:
-```bash
-npm start
+Start the server (http://localhost:5000):
+
 ```
-You should see:
-```
-MongoDB connected successfully.
-ShopKart auth server running on http://localhost:5000
+npm run dev
 ```
 
-Optional — populate sample products so the catalog isn't empty:
-```bash
+Optional: add sample products.
+
+```
 npm run seed
 ```
 
-## 3. Set up the frontend
+### 2. Frontend
 
-In a **second terminal**:
-```bash
+In a second terminal:
+
+```
 cd frontend
 npm install
 cp .env.example .env
 npm run dev
 ```
-Open **http://localhost:5173**.
 
-The backend must already be running — the frontend has no server of its
-own, it only calls the backend's API.
+Open http://localhost:5173. The backend must be running first.
 
-## 4. What's in each lab
+## API overview
 
-### Lab 01 — Authentication API (backend)
-- `POST /customers/register`, `POST /customers/login`
-- `GET /customers/me` (protected — JWT in an HttpOnly cookie)
-- `POST /customers/logout`
-- `PATCH /customers/change-password` (bonus)
-- Passwords hashed with bcrypt, never stored or returned in plaintext
+| Area | Endpoints |
+|------|-----------|
+| Auth | `POST /customers/register`, `POST /customers/login`, `GET /customers/me`, `POST /customers/logout` |
+| Products | `POST /products`, `GET /products` (`?search=`, `?category=`, `?sort=price_asc\|price_desc`), `GET /products/:id` |
+| Orders | `POST /orders/create-payment-order`, `POST /orders/verify-payment`, `GET /orders`, `GET /orders/:id` |
 
-### Lab 02 — Auth frontend (React)
-- `/register`, `/login` — controlled forms, validation, cookie-based login
-- `/home` — protected page, fetches `/customers/me`, redirects to `/login`
-  if not authenticated
-- Navbar logout clears the cookie and redirects to `/login`
+Cart and wishlist routes are also protected and use the same cookie authentication.
 
-### Lab 03 — Product catalog (backend + frontend)
+## Payment flow
 
-**Backend:**
-- `POST /products` — create a product (`400` on missing field, price ≤ 0,
-  or negative stock)
-- `GET /products` — supports `?search=`, `?category=`, and `?sort=price_asc`
-  / `?sort=price_desc` (bonus), all combinable; builds the MongoDB query
-  dynamically instead of one endpoint per filter
-- `GET /products/:id` — `400` for a malformed ID, `404` if not found
+1. The frontend sends only the shipping address. It never sends prices or totals.
+2. The backend validates the cart and stock, calculates the total from current product prices, saves a `PENDING_PAYMENT` order with a snapshot of each item's name and price, and creates a Razorpay order.
+3. Razorpay Checkout opens in the browser.
+4. The frontend sends the payment id, order id and signature to the backend.
+5. The backend verifies the HMAC signature using the stored Razorpay order id. Only then is the order marked `PAID` / `PLACED` and the cart cleared.
 
-**Frontend:**
-- `/products` — fetches the list, debounced search + category dropdown,
-  handles loading / error / empty states, renders a responsive grid of
-  `ProductCard`s (no hardcoded cards)
-- `/products/:id` — fetches by URL parameter, shows the full product with
-  an "Add to Cart" button (UI only, disabled when out of stock)
+If the payment fails or the signature is invalid, the cart is kept.
 
-## 5. Testing with Postman
+## Security notes
 
-Import `postman/ShopKart-Auth.postman_collection.json` for the auth
-endpoints. For products, test directly against `http://localhost:5000/products`
-with the request bodies shown in the Lab 03 brief.
+- Passwords are hashed with bcrypt.
+- The Razorpay secret stays on the backend and is never sent to the browser.
+- `.env` is git-ignored. Use only Razorpay Test Mode keys.
 
-## 6. Notes on the implementation
+## Test payments
 
-- Both backend features follow MVC: `models/` → `controllers/` → `routes/`,
-  with `middlewares/` for auth and `utils/` for the token helper.
-- The frontend keeps all backend calls in `src/services/api.js` — no
-  component talks to axios directly.
-- A single Express server (`backend/index.js`) serves both `/customers/*`
-  and `/products/*` under one process; the React app in `frontend/` is a
-  separate process during development (`npm run dev`) that calls that API
-  over CORS with credentials.
+Use Razorpay Test Mode only. No real money is charged. In the checkout popup, pick Netbanking and choose Success on the test bank page.
