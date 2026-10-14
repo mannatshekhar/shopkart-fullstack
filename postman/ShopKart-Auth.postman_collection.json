@@ -1,0 +1,62 @@
+{
+  "info": {
+    "name": "ShopKart Customer Authentication",
+    "description": "Endpoints for the ShopKart Customer Authentication Service (Lab 01).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:5000" }
+  ],
+  "item": [
+    {
+      "name": "Register Customer",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"fullName\": \"John Doe\",\n  \"email\": \"john@gmail.com\",\n  \"password\": \"john123\",\n  \"phone\": \"9876543210\"\n}"
+        },
+        "url": { "raw": "{{baseUrl}}/customers/register", "host": ["{{baseUrl}}"], "path": ["customers", "register"] }
+      }
+    },
+    {
+      "name": "Login Customer",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"john@gmail.com\",\n  \"password\": \"john123\"\n}"
+        },
+        "url": { "raw": "{{baseUrl}}/customers/login", "host": ["{{baseUrl}}"], "path": ["customers", "login"] }
+      }
+    },
+    {
+      "name": "Get My Profile",
+      "request": {
+        "method": "GET",
+        "url": { "raw": "{{baseUrl}}/customers/me", "host": ["{{baseUrl}}"], "path": ["customers", "me"] }
+      }
+    },
+    {
+      "name": "Change Password (Bonus)",
+      "request": {
+        "method": "PATCH",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"oldPassword\": \"john123\",\n  \"newPassword\": \"newpass456\"\n}"
+        },
+        "url": { "raw": "{{baseUrl}}/customers/change-password", "host": ["{{baseUrl}}"], "path": ["customers", "change-password"] }
+      }
+    },
+    {
+      "name": "Logout Customer",
+      "request": {
+        "method": "POST",
+        "url": { "raw": "{{baseUrl}}/customers/logout", "host": ["{{baseUrl}}"], "path": ["customers", "logout"] }
+      }
+    }
+  ]
+}

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ShopKart — Your account</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <div class="shell">
+
+    <aside class="brand">
+      <div class="brand__top">
+        <svg class="brand__mark" width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M5 8H8.5L11.2 21.5C11.5 22.9 12.7 24 14.2 24H25.5C26.9 24 28.1 23 28.4 21.6L30.5 12.5H9.7" stroke="#F2A93B" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="15" cy="28.5" r="1.8" fill="#F2A93B"/>
+          <circle cx="24.5" cy="28.5" r="1.8" fill="#F2A93B"/>
+        </svg>
+        <span class="brand__name">ShopKart</span>
+      </div>
+
+      <div class="brand__mid">
+        <h1 class="brand__headline">One account.<br>Every order,<br>sorted.</h1>
+        <p class="brand__sub">Register once and you're set — track orders, save addresses, and check out faster every time.</p>
+
+        <ul class="brand__list">
+          <li><span class="brand__dot"></span>Password hashed with bcrypt, never stored in plain text</li>
+          <li><span class="brand__dot"></span>Sessions kept in a secure, HttpOnly cookie</li>
+          <li><span class="brand__dot"></span>Your profile, visible only to you</li>
+        </ul>
+      </div>
+
+      <div class="brand__foot">
+        <span>ShopKart Engineering &mdash; Customer Authentication Service</span>
+      </div>
+    </aside>
+
+    <main class="stage">
+
+      <section id="view-auth" class="panel">
+
+        <div class="tabs" role="tablist" aria-label="Account access">
+          <button class="tab is-active" id="tab-login" role="tab" aria-selected="true" aria-controls="form-login">Log in</button>
+          <button class="tab" id="tab-register" role="tab" aria-selected="false" aria-controls="form-register">Create account</button>
+        </div>
+
+        <div id="banner" class="banner" hidden></div>
+
+        <form id="form-login" class="form" autocomplete="on">
+          <h2 class="form__title">Welcome back</h2>
+          <p class="form__hint">Log in with the email you registered with.</p>
+
+          <label class="field">
+            <span class="field__label">Email</span>
+            <input type="email" name="email" required placeholder="you@example.com" autocomplete="email" />
+          </label>
+
+          <label class="field">
+            <span class="field__label">Password</span>
+            <div class="field__pw">
+              <input type="password" name="password" required placeholder="Enter your password" autocomplete="current-password" minlength="6" />
+              <button type="button" class="pw-toggle" aria-label="Show password">Show</button>
+            </div>
+          </label>
+
+          <button type="submit" class="btn btn--primary btn--block">
+            <span class="btn__label">Log in</span>
+          </button>
+
+          <p class="form__switch">New to ShopKart? <a href="#" data-switch="register">Create an account</a></p>
+        </form>
+
+        <form id="form-register" class="form" hidden autocomplete="on">
+          <h2 class="form__title">Create your account</h2>
+          <p class="form__hint">Takes less than a minute — no card required.</p>
+
+          <label class="field">
+            <span class="field__label">Full name</span>
+            <input type="text" name="fullName" required placeholder="Jordan Rivera" autocomplete="name" />
+          </label>
+
+          <label class="field">
+            <span class="field__label">Email</span>
+            <input type="email" name="email" required placeholder="you@example.com" autocomplete="email" />
+          </label>
+
+          <label class="field">
+            <span class="field__label">Phone</span>
+            <input type="tel" name="phone" required placeholder="9876543210" autocomplete="tel" />
+          </label>
+
+          <label class="field">
+            <span class="field__label">Password</span>
+            <div class="field__pw">
+              <input type="password" name="password" required placeholder="At least 6 characters" autocomplete="new-password" minlength="6" />
+              <button type="button" class="pw-toggle" aria-label="Show password">Show</button>
+            </div>
+            <span class="field__note">Use at least 6 characters.</span>
+          </label>
+
+          <button type="submit" class="btn btn--primary btn--block">
+            <span class="btn__label">Create account</span>
+          </button>
+
+          <p class="form__switch">Already have an account? <a href="#" data-switch="login">Log in</a></p>
+        </form>
+
+      </section>
+
+      <section id="view-dashboard" class="panel" hidden>
+
+        <header class="dash-head">
+          <div>
+            <p class="dash-eyebrow">Signed in</p>
+            <h2 id="dash-name" class="dash-title">—</h2>
+          </div>
+          <button id="btn-logout" class="btn btn--ghost">Log out</button>
+        </header>
+
+        <div class="dash-grid">
+
+          <div class="card">
+            <h3 class="card__title">Profile</h3>
+            <dl class="dl">
+              <div class="dl__row">
+                <dt>Full name</dt>
+                <dd id="dash-fullname">—</dd>
+              </div>
+              <div class="dl__row">
+                <dt>Email</dt>
+                <dd id="dash-email">—</dd>
+              </div>
+              <div class="dl__row">
+                <dt>Phone</dt>
+                <dd id="dash-phone">—</dd>
+              </div>
+              <div class="dl__row">
+                <dt>Customer since</dt>
+                <dd id="dash-created">—</dd>
+              </div>
+            </dl>
+          </div>
+
+          <div class="card">
+            <h3 class="card__title">Change password</h3>
+            <p class="card__hint">Verify your current password to set a new one.</p>
+            <form id="form-change-password" class="form form--compact">
+              <label class="field">
+                <span class="field__label">Current password</span>
+                <input type="password" name="oldPassword" required minlength="6" autocomplete="current-password" />
+              </label>
+              <label class="field">
+                <span class="field__label">New password</span>
+                <input type="password" name="newPassword" required minlength="6" autocomplete="new-password" />
+              </label>
+              <button type="submit" class="btn btn--secondary btn--block">
+                <span class="btn__label">Update password</span>
+              </button>
+            </form>
+          </div>
+
+        </div>
+      </section>
+
+      <section id="view-loading" class="panel panel--center">
+        <div class="spinner" aria-label="Loading"></div>
+      </section>
+
+    </main>
+  </div>
+
+<script src="js/app.js"></script>
+</body>
+</html>
